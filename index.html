@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coomer Navigator</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        .nav {
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 15px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 4px 30px rgba(0,0,0,.5);
+            border-bottom: 1px solid rgba(111,66,193,.2);
+        }
+        .nav-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            list-style: none;
+            max-width: 1400px;
+            margin: 0 auto;
+            justify-content: center;
+        }
+        .nav-item {
+            background: rgba(111,66,193,.08);
+            border: 1px solid rgba(111,66,193,.25);
+            border-radius: 25px;
+            transition: all .4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        .nav-item:hover {
+            background: rgba(111,66,193,.2);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(111,66,193,.3);
+        }
+        .nav-link {
+            display: block;
+            padding: 12px 20px;
+            color: #f8f9fa;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all .3s;
+        }
+        .nav-link.active {
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(111,66,193,.4);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 20px 40px;
+        }
+        .section {
+            display: none;
+            animation: slideIn .5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .section.active { display: block; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 25px 0;
+            border-bottom: 2px solid rgba(111,66,193,.3);
+            background: rgba(111,66,193,.05);
+            border-radius: 15px;
+            padding: 25px 30px;
+        }
+        .header h2 {
+            color: #6f42c1;
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stats {
+            font-size: 13px;
+            color: #adb5bd;
+            background: rgba(255,255,255,.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .filters {
+            background: rgba(45, 45, 45, 0.6);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(111,66,193,.3);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,.2);
+        }
+        .filters h5 {
+            color: #6f42c1;
+            margin-bottom: 18px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+
+        .form-control {
+            background: rgba(26, 26, 26, 0.8);
+            border: 2px solid rgba(111,66,193,.2);
+            color: #f8f9fa;
+            padding: 14px 18px;
+            border-radius: 12px;
+            transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #6f42c1;
+            box-shadow: 0 0 0 4px rgba(111,66,193,.15);
+            background: rgba(45, 45, 45, 0.9);
+            transform: scale(1.02);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            color: #fff;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            box-shadow: 0 4px 15px rgba(111,66,193,.3);
+        }
+        .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 35px rgba(111,66,193,.5);
+        }
+        .btn:active { transform: translateY(-1px) scale(1.02); }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #6f42c1;
+            color: #6f42c1;
+            box-shadow: none;
+        }
+        .btn-outline:hover {
+            background: #6f42c1;
+            color: #fff;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(252px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(45, 45, 45, 0.6);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(111,66,193,.15);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all .4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-shadow: 0 8px 32px rgba(0,0,0,.2);
+        }
+        .card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 20px 60px rgba(111,66,193,.25);
+            border-color: rgba(111,66,193,.5);
+        }
+
+        .card-media {
+            position: relative;
+            width: 100%;
+            height: 260px;
+            overflow: hidden;
+        }
+        .card-img, .card-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform .6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card:hover .card-img, .card:hover .card-video {
+            transform: scale(1.1) rotate(1deg);
+        }
+
+        .play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(111,66,193,.95);
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 28px;
+            backdrop-filter: blur(10px);
+            transition: all .3s;
+        }
+        .card:hover .play-overlay {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .card-body { padding: 20px; }
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #f8f9fa;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .card-meta {
+            font-size: 12px;
+            color: #adb5bd;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .fav-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0,0,0,.8);
+            border: none;
+            color: #fff;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .fav-btn:hover {
+            background: #6f42c1;
+            transform: scale(1.15);
+        }
+        .fav-btn.favorited {
+            background: #dc3545;
+            animation: heartBeat .8s;
+        }
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.2); }
+            50% { transform: scale(1.1); }
+            75% { transform: scale(1.25); }
+        }
+
+        .tag {
+            background: rgba(111,66,193,.2);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 700;
+            margin: 3px;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            border: 1px solid rgba(111,66,193,.4);
+        }
+        .tag.service {
+            background: rgba(73,80,87,.3);
+            border-color: rgba(73,80,87,.6);
+        }
+        .tag.fav {
+            background: rgba(220,53,69,.3);
+            border-color: rgba(220,53,69,.6);
+        }
+
+        .creator-card {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 25px;
+            background: rgba(45, 45, 45, 0.6);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(111,66,193,.15);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            transition: all .4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .creator-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(111,66,193,.1), transparent);
+            transition: left .6s;
+        }
+        .creator-card:hover::before {
+            left: 100%;
+        }
+        .creator-card:hover {
+            transform: translateX(8px) scale(1.02);
+            border-color: rgba(111,66,193,.4);
+            box-shadow: 0 12px 40px rgba(111,66,193,.2);
+        }
+        .creator-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 900;
+            font-size: 28px;
+            box-shadow: 0 8px 25px rgba(111,66,193,.4);
+            position: relative;
+            overflow: hidden;
+        }
+        .creator-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .creator-info { flex: 1; }
+        .creator-name {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #f8f9fa;
+        }
+        .creator-stats {
+            font-size: 12px;
+            color: #adb5bd;
+            line-height: 1.5;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,.95);
+            z-index: 10000;
+            backdrop-filter: blur(15px);
+        }
+        .modal-content {
+            background: rgba(45, 45, 45, 0.95);
+            backdrop-filter: blur(20px);
+            margin: 30px auto;
+            padding: 0;
+            border-radius: 25px;
+            max-width: 1100px;
+            position: relative;
+            max-height: 90vh;
+            overflow: hidden;
+            border: 2px solid rgba(111,66,193,.4);
+            box-shadow: 0 30px 80px rgba(0,0,0,.7);
+            animation: modalSlideIn .4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: scale(0.8) translateY(-50px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-header {
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            padding: 25px 30px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin: 0;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 32px;
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .modal-close:hover {
+            background: rgba(255,255,255,.2);
+            transform: rotate(90deg) scale(1.1);
+        }
+        .modal-body {
+            padding: 30px;
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+
+        /* Modal Media Navigation */
+        .modal-media-container {
+            position: relative;
+            margin-bottom: 25px;
+        }
+        .modal-media {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,.3);
+            display: block;
+            margin: 0 auto;
+            max-height: 60vh;
+            object-fit: contain;
+        }
+        .modal-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(111,66,193,.9);
+            color: #fff;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+        .modal-nav-btn:hover {
+            background: rgba(111,66,193,1);
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 4px 15px rgba(111,66,193,.5);
+        }
+        .modal-nav-btn:disabled {
+            background: rgba(73,80,87,.5);
+            cursor: not-allowed;
+            transform: translateY(-50%);
+        }
+        .modal-nav-btn.prev {
+            left: 15px;
+        }
+        .modal-nav-btn.next {
+            right: 15px;
+        }
+        .modal-counter {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,.8);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-attachments {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        .modal-attachment {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 12px;
+            transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(0,0,0,.3);
+        }
+        .modal-attachment:hover {
+            transform: scale(1.08);
+        }
+        .modal-content-text {
+            background: rgba(26, 26, 26, 0.8);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #6f42c1;
+            line-height: 1.7;
+            backdrop-filter: blur(10px);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+        .page-btn {
+            background: rgba(73,80,87,.6);
+            color: #fff;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 45px;
+            backdrop-filter: blur(10px);
+        }
+        .page-btn:hover {
+            background: #6f42c1;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(111,66,193,.4);
+        }
+        .page-btn.active {
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            box-shadow: 0 0 20px rgba(111,66,193,.6);
+        }
+        .page-btn:disabled {
+            background: rgba(51,51,51,.4);
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .page-info {
+            background: rgba(45, 45, 45, 0.8);
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            color: #adb5bd;
+            border: 1px solid rgba(111,66,193,.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10,10,10,.98);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(10px);
+        }
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(45,45,45,.3);
+            border-top: 5px solid #6f42c1;
+            border-radius: 50%;
+            animation: spin 1.2s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-text {
+            margin-top: 25px;
+            color: #adb5bd;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: #fff;
+            padding: 20px 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #fff;
+            font-weight: 600;
+            box-shadow: 0 8px 25px rgba(220,53,69,.3);
+        }
+        .empty {
+            text-align: center;
+            padding: 80px 20px;
+            color: #6c757d;
+        }
+        .empty-icon {
+            font-size: 80px;
+            margin-bottom: 25px;
+            opacity: .6;
+        }
+        .empty-title {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: #adb5bd;
+            font-weight: 700;
+        }
+        .empty-text {
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .fav-counter {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 800;
+            animation: glow 2s infinite alternate;
+            box-shadow: 0 4px 15px rgba(220,53,69,.4);
+        }
+        @keyframes glow {
+            0% { box-shadow: 0 4px 15px rgba(220,53,69,.4); }
+            100% { box-shadow: 0 8px 30px rgba(220,53,69,.6); }
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(45,45,45,.3);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #8b5cf6, #6f42c1);
+        }
+
+        @media(max-width: 768px) {
+            .nav { padding: 12px; }
+            .nav-list { flex-direction: column; gap: 8px; }
+            .grid { grid-template-columns: 1fr; }
+            .filter-grid { grid-template-columns: 1fr; }
+            .modal-content { margin: 15px; max-height: 95vh; }
+            .creator-card { flex-direction: column; text-align: center; }
+            .pagination { gap: 6px; }
+            .container { padding: 90px 15px 30px; }
+            .header { flex-direction: column; gap: 15px; text-align: center; }
+            .modal-nav-btn { width: 40px; height: 40px; font-size: 16px; }
+        }
+
+        @media(max-width: 480px) {
+            .container { padding: 85px 10px 25px; }
+            .card { margin-bottom: 20px; }
+            .modal-body { padding: 20px; }
+            .nav-link { padding: 10px 16px; font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <ul class="nav-list">
+            <li class="nav-item"><a href="#" class="nav-link active" onclick="navigate('inicio')">🏠 Início</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="navigate('criadores')">👥 Criadores</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="navigate('pesquisar-criadores')">🔍 Pesquisar</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="navigate('recentes')">⏰ Recentes</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="navigate('aleatorio-criador')">🎲 Aleatório</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="navigate('popular')">🔥 Popular</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="navigate('favoritos')">💖 Favoritos</a></li>
+            <li class="nav-item"><span class="nav-link fav-counter" id="favCounter">♥ 0</span></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- Início -->
+        <section id="inicio" class="section active">
+            <div class="header">
+                <h2>🌟 Posts Recentes</h2>
+                <div class="stats" id="inicioStats">Carregando...</div>
+            </div>
+            <div id="inicioContainer" class="grid"></div>
+            <div class="pagination" id="inicioPagination"></div>
+        </section>
+
+        <!-- Criadores -->
+        <section id="criadores" class="section">
+            <div class="header">
+                <h2>👥 Criadores Populares</h2>
+                <div class="stats" id="criadoresStats">Carregando...</div>
+            </div>
+            <div id="criadoresContainer"></div>
+            <div class="pagination" id="criadoresPagination"></div>
+        </section>
+
+        <!-- Pesquisar Criadores -->
+        <section id="pesquisar-criadores" class="section">
+            <div class="header">
+                <h2>🔍 Pesquisar Criadores</h2>
+            </div>
+            <div class="filters">
+                <h5>🎯 Encontre seu criador favorito</h5>
+                <div class="filter-grid">
+                    <input type="text" id="creatorSearchInput" class="form-control" placeholder="Digite o nome do criador..." maxlength="100">
+                    <button class="btn" onclick="searchCreators()">🔍 Buscar</button>
+                </div>
+            </div>
+            <div id="searchCreatorsContainer"></div>
+        </section>
+
+        <!-- Recentes -->
+        <section id="recentes" class="section">
+            <div class="header">
+                <h2>⏰ Posts Mais Recentes</h2>
+                <div class="stats" id="recentesStats">Carregando...</div>
+            </div>
+            <div id="recentesContainer" class="grid"></div>
+            <!-- <div class="pagination" id="recentesPagination"></div> -->
+        </section>
+
+        <!-- Aleatório Criador -->
+        <section id="aleatorio-criador" class="section">
+            <div class="header">
+                <h2>🎲 Criador Aleatório</h2>
+                <button class="btn btn-outline" onclick="loadRandomCreator()">🔄 Novo Aleatório</button>
+            </div>
+            <div id="randomCreatorContainer"></div>
+        </section>
+
+        <!-- Popular -->
+        <section id="popular" class="section">
+            <div class="header">
+                <h2>🔥 Posts Populares</h2>
+                <div class="stats" id="popularStats">Carregando...</div>
+            </div>
+            <div id="popularContainer" class="grid"></div>
+            <div class="pagination" id="popularPagination"></div>
+        </section>
+
+        <!-- Favoritos -->
+        <section id="favoritos" class="section">
+            <div class="header">
+                <h2>💖 Meus Favoritos</h2>
+                <div class="stats" id="favoritosStats">0 favoritos</div>
+            </div>
+            <div id="favoritosContainer" class="grid"></div>
+        </section>
+
+        <!-- Perfil do Criador -->
+        <section id="perfil-criador" class="section">
+            <div id="creatorProfileContainer"></div>
+        </section>
+    </div>
+
+    <!-- Modal -->
+    <div id="postModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Detalhes do Post</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">Carregando dados...</div>
+    </div>
+
+    <script>
+        // Global Configuration
+        const API_BASE = 'https://coomer.su/api';
+        const PROXIES = ['https://corsproxy.io/?', 'https://api.allorigins.win/raw?url='];
+        const ITEMS_PER_PAGE = 50;
+
+        // Global State
+        let favorites = JSON.parse(localStorage.getItem('coomer_favorites') || '[]');
+        let currentSection = 'inicio';
+        let pageStates = {};
+        let currentModalMedia = [];
+        let currentModalIndex = 0;
+        let creatorPostsData = {};
+
+        // Utility Functions
+        const $ = id => document.getElementById(id);
+        const show = id => {
+            const element = $(id);
+            if (element) element.style.display = 'flex';
+        };
+        const hide = id => {
+            const element = $(id);
+            if (element) element.style.display = 'none';
+        };
+        const loading = show => {
+            const element = $('loading');
+            if (element) element.style.display = show ? 'flex' : 'none';
+        };
+
+        // API Request Handler
+        async function apiRequest(endpoint, params = {}) {
+            const url = new URL(`${API_BASE}${endpoint}`);
+            Object.keys(params).forEach(key => {
+                if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
+                    if (Array.isArray(params[key])) {
+                        params[key].forEach(val => val && url.searchParams.append(key, val));
+                    } else {
+                        url.searchParams.append(key, params[key]);
+                    }
+                }
+            });
+
+            for (let proxy of PROXIES) {
+                try {
+                    const response = await fetch(`${proxy}${url.toString()}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        return data;
+                    }
+                } catch (error) {
+                    console.warn(`Proxy failed: ${proxy}`, error.message);
+                }
+            }
+            throw new Error(`All proxies failed for ${endpoint}`);
+        }
+
+        // Navigation
+        function navigate(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+
+            const section = $(sectionId);
+            if (section) section.classList.add('active');
+
+            // Find and activate the clicked nav link
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                if (link.onclick && link.onclick.toString().includes(sectionId)) {
+                    link.classList.add('active');
+                }
+            });
+
+            currentSection = sectionId;
+
+            if (!pageStates[sectionId]) {
+                pageStates[sectionId] = { page: 1, loading: false };
+            }
+
+            switch(sectionId) {
+                case 'inicio': loadPosts(1, 'inicioContainer', 'inicioStats', 'inicioPagination'); break;
+                case 'criadores': loadCreators(1); break;
+                case 'recentes': loadPosts(1, 'recentesContainer', 'recentesStats', 'recentesPagination'); break;
+                case 'popular': loadPopular(1); break;
+                case 'aleatorio-criador': loadRandomCreator(); break;
+                case 'favoritos': loadFavorites(); break;
+            }
+        }
+
+        // Posts Functions
+        async function loadPosts(page = 1, containerId, statsId, paginationId) {
+            const state = pageStates[currentSection] = pageStates[currentSection] || {};
+            if (state.loading) return;
+
+            state.loading = true;
+            loading(true);
+
+            try {
+                const offset = (page - 1) * ITEMS_PER_PAGE;
+                const data = await apiRequest('/v1/posts', { o: offset });
+
+                const posts = data.posts || data;
+
+                if (Array.isArray(posts) && posts.length > 0) {
+                    displayPosts(posts, containerId);
+                    updateStats(statsId, `${posts.length} posts • Página ${page}`);
+                    generatePagination(page, paginationId, (p) => loadPosts(p, containerId, statsId, paginationId));
+                    state.page = page;
+                } else {
+                    showEmpty('Nenhum post encontrado', containerId);
+                    updateStats(statsId, 'Nenhum post encontrado');
+                }
+            } catch (error) {
+                showError(`Erro ao carregar posts: ${error.message}`, containerId);
+                updateStats(statsId, 'Erro no carregamento');
+            } finally {
+                state.loading = false;
+                loading(false);
+            }
+        }
+
+        async function loadPopular(page = 1) {
+            const state = pageStates['popular'] = pageStates['popular'] || {};
+            if (state.loading) return;
+
+            state.loading = true;
+            loading(true);
+
+            try {
+                const offset = (page - 1) * ITEMS_PER_PAGE;
+                const data = await apiRequest('/v1/posts', { o: offset });
+
+                const posts = data.posts || data;
+                if (Array.isArray(posts) && posts.length > 0) {
+                    // Ordena por favoritos para simular popularidade
+                    const sortedPosts = posts.sort((a, b) => (b.fav_count || 0) - (a.fav_count || 0));
+                    displayPosts(sortedPosts, 'popularContainer');
+                    updateStats('popularStats', `${sortedPosts.length} posts populares • Página ${page}`);
+                    generatePagination(page, 'popularPagination', loadPopular);
+                    state.page = page;
+                } else {
+                    showEmpty('Nenhum post popular encontrado', 'popularContainer');
+                    updateStats('popularStats', 'Nenhum post popular encontrado');
+                }
+            } catch (error) {
+                showError(`Erro ao carregar posts populares: ${error.message}`, 'popularContainer');
+                updateStats('popularStats', 'Erro no carregamento');
+            } finally {
+                state.loading = false;
+                loading(false);
+            }
+        }
+
+        // Creators Functions
+        async function loadCreators(page = 1) {
+            const state = pageStates['criadores'] = pageStates['criadores'] || {};
+            if (state.loading) return;
+
+            state.loading = true;
+            loading(true);
+
+            try {
+                const data = await apiRequest('/v1/creators.txt');
+
+                if (Array.isArray(data) && data.length > 0) {
+                    const sorted = data.sort((a, b) => (b.favorited || 0) - (a.favorited || 0));
+                    const startIdx = (page - 1) * 20;
+                    const endIdx = startIdx + 20;
+                    const paginatedData = sorted.slice(startIdx, endIdx);
+
+                    displayCreators(paginatedData, 'criadoresContainer');
+                    updateStats('criadoresStats', `${data.length} criadores • Página ${page} de ${Math.ceil(data.length / 20)}`);
+                    generatePagination(page, 'criadoresPagination', loadCreators, Math.ceil(data.length / 20));
+                    state.page = page;
+                } else {
+                    showEmpty('Nenhum criador encontrado', 'criadoresContainer');
+                    updateStats('criadoresStats', 'Nenhum criador encontrado');
+                }
+            } catch (error) {
+                showError(`Erro ao carregar criadores: ${error.message}`, 'criadoresContainer');
+                updateStats('criadoresStats', 'Erro no carregamento');
+            } finally {
+                state.loading = false;
+                loading(false);
+            }
+        }
+
+        async function searchCreators() {
+            const searchInput = $('creatorSearchInput');
+            const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+            if (!query) return;
+
+            loading(true);
+            try {
+                const data = await apiRequest('/v1/creators.txt');
+
+                if (Array.isArray(data)) {
+                    const filtered = data.filter(creator =>
+                        creator.name.toLowerCase().includes(query) ||
+                        creator.service.toLowerCase().includes(query)
+                    ).sort((a, b) => (b.favorited || 0) - (a.favorited || 0));
+
+                    if (filtered.length > 0) {
+                        displayCreators(filtered.slice(0, 50), 'searchCreatorsContainer');
+                    } else {
+                        showEmpty(`Nenhum criador encontrado para "${query}"`, 'searchCreatorsContainer');
+                    }
+                }
+            } catch (error) {
+                showError(`Erro na busca: ${error.message}`, 'searchCreatorsContainer');
+            } finally {
+                loading(false);
+            }
+        }
+
+        async function loadRandomCreator() {
+            loading(true);
+            try {
+                const randomData = await apiRequest('/v1/artists/random');
+
+                if (randomData && randomData.service && randomData.artist_id) {
+                    await showCreatorProfile(randomData.service, randomData.artist_id, 'randomCreatorContainer');
+                } else {
+                    showEmpty('Nenhum criador aleatório disponível', 'randomCreatorContainer');
+                }
+            } catch (error) {
+                showError(`Erro ao buscar criador aleatório: ${error.message}`, 'randomCreatorContainer');
+            } finally {
+                loading(false);
+            }
+        }
+
+        // Favorites Functions
+        function loadFavorites() {
+            updateStats('favoritosStats', `${favorites.length} favoritos`);
+
+            if (favorites.length === 0) {
+                showEmpty('Você ainda não tem favoritos! ❤️ Adicione alguns posts aos favoritos para vê-los aqui.', 'favoritosContainer');
+                return;
+            }
+
+            loading(true);
+
+            Promise.all(
+                favorites.map(async (fav) => {
+                    try {
+                        const data = await apiRequest(`/v1/${fav.service}/user/${fav.user}/post/${fav.id}`);
+                        return data.post || data;
+                    } catch (error) {
+                        console.warn(`Failed to load favorite post ${fav.id}:`, error);
+                        return null;
+                    }
+                })
+            ).then(posts => {
+                const validPosts = posts.filter(post => post !== null);
+                if (validPosts.length > 0) {
+                    displayPosts(validPosts, 'favoritosContainer');
+                } else {
+                    showEmpty('Não foi possível carregar os favoritos', 'favoritosContainer');
+                }
+                loading(false);
+            }).catch(error => {
+                showError(`Erro ao carregar favoritos: ${error.message}`, 'favoritosContainer');
+                loading(false);
+            });
+        }
+
+        // Get Creator Icon URL
+        function getCreatorIconUrl(service, creatorId) {
+            return `https://img.coomer.su/icons/${service}/${creatorId}`;
+        }
+
+        // Display Functions
+        function displayPosts(posts, containerId) {
+            const container = $(containerId);
+            if (!container) return;
+
+            if (!posts || posts.length === 0) {
+                showEmpty('Nenhum post encontrado', containerId);
+                return;
+            }
+
+            container.innerHTML = posts.map(post => {
+                const isFavorited = favorites.some(f => f.id === post.id && f.service === post.service);
+                const hasFile = post.file && post.file.path;
+                const fileUrl = hasFile ? `https://coomer.su/data${post.file.path}` : null;
+                const fileName = post.file?.name || '';
+                const filePath = post.file?.path || '';
+                const isVideo = /\.(mp4|webm|avi|mov|mkv)$/i.test(fileName + filePath);
+
+                let mediaElement = '';
+                if (hasFile) {
+                    if (isVideo) {
+                        mediaElement = `
+                            <div class="card-media">
+                                <video class="card-video" preload="metadata" muted>
+                                    <source src="${fileUrl}" type="video/mp4">
+                                </video>
+                                <div class="play-overlay">▶</div>
+                            </div>
+                        `;
+                    } else {
+                        mediaElement = `
+                            <div class="card-media">
+                                <img class="card-img" src="${fileUrl}" alt="${post.title || 'Post'}"
+                                     loading="lazy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjI0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjNDk1MDU3Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjYWRiNWJkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+SW1hZ2VtIEluZGlzcG9uw612ZWw8L3RleHQ+PC9zdmc+'">
+                            </div>
+                        `;
+                    }
+                } else {
+                    mediaElement = `
+                        <div class="card-media" style="background: linear-gradient(135deg, #495057, #6c757d); display: flex; align-items: center; justify-content: center; color: #adb5bd; font-size: 14px; font-weight: 600;">
+                            📄 Sem Mídia
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="card">
+                        <button class="fav-btn ${isFavorited ? 'favorited' : ''}"
+                                onclick="toggleFavorite('${post.id}', '${post.service}', '${post.user}')"
+                                title="${isFavorited ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}">
+                            ${isFavorited ? '❤️' : '🤍'}
+                        </button>
+                        ${mediaElement}
+                        <div class="card-body">
+                            <div class="card-title">${escapeHtml(post.title || 'Sem título')}</div>
+                            <div class="card-meta">
+                                <div style="margin-bottom: 8px;">
+                                    <span class="tag service">${post.service}</span>
+                                    ${post.fav_count ? `<span class="tag fav">❤️ ${post.fav_count}</span>` : ''}
+                                </div>
+                                <div>👤 <a href="#" onclick="showCreatorProfile('${post.service}', '${post.user}')"
+                                         style="color: #6f42c1; text-decoration: none; font-weight: 600;">
+                                        ${post.user}
+                                    </a></div>
+                                <div>📅 ${formatDate(post.published)}</div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn" onclick="openPostModal('${post.service}', '${post.user}', '${post.id}')"
+                                        style="flex: 1; font-size: 12px; padding: 8px 14px;">
+                                    👁️ Ver Post
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function displayCreators(creators, containerId) {
+            const container = $(containerId);
+            if (!container) return;
+
+            if (!creators || creators.length === 0) {
+                showEmpty('Nenhum criador encontrado', containerId);
+                return;
+            }
+
+            container.innerHTML = creators.map(creator => {
+                const iconUrl = getCreatorIconUrl(creator.service, creator.id);
+                return `
+                    <div class="creator-card">
+                        <div class="creator-avatar">
+                            <img src="${iconUrl}"
+                                 alt="${creator.name}"
+                                 onerror="this.style.display='none'; this.parentElement.textContent='${creator.name.charAt(0).toUpperCase()}';">
+                        </div>
+                        <div class="creator-info">
+                            <div class="creator-name">${escapeHtml(creator.name)}</div>
+                            <div class="creator-stats">
+                                <div style="margin-bottom: 6px;">
+                                    <span class="tag service">${creator.service}</span>
+                                    ${creator.favorited ? `<span class="tag fav">❤️ ${creator.favorited}</span>` : ''}
+                                </div>
+                                <div>🆔 ${creator.id}</div>
+                            </div>
+                        </div>
+                        <button class="btn" onclick="showCreatorProfile('${creator.service}', '${creator.id}')"
+                                style="min-width: 120px;">
+                            👤 Ver Perfil
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Creator Profile with Pagination
+        async function showCreatorProfile(service, creatorId, containerId = null) {
+            if (!containerId) {
+                navigate('perfil-criador');
+                containerId = 'creatorProfileContainer';
+            }
+
+            loading(true);
+            try {
+                // Initialize creator posts data
+                const profileKey = `${service}_${creatorId}`;
+                if (!creatorPostsData[profileKey]) {
+                    creatorPostsData[profileKey] = {
+                        currentPage: 1,
+                        loading: false,
+                        profile: null,
+                        paginationInfo: null
+                    };
+                }
+
+                await loadCreatorPosts(service, creatorId, 1, containerId);
+
+            } catch (error) {
+                const container = $(containerId);
+                if (container) {
+                    container.innerHTML = `<div class="error">Erro ao carregar perfil: ${error.message}</div>`;
+                }
+            } finally {
+                loading(false);
+            }
+        }
+
+        async function loadCreatorPosts(service, creatorId, page = 1, containerId) {
+            const profileKey = `${service}_${creatorId}`;
+            const profileData = creatorPostsData[profileKey];
+
+            if (profileData.loading) return;
+            profileData.loading = true;
+
+            loading(true);
+
+            try {
+                const offset = (page - 1) * ITEMS_PER_PAGE;
+                const [profileResponse, postsResponse] = await Promise.all([
+                    profileData.profile ? Promise.resolve(profileData.profile) :
+                        apiRequest(`/v1/${service}/user/${creatorId}/profile`).catch(() => null),
+                    apiRequest(`/v1/${service}/user/${creatorId}`, { o: offset }).catch(() => ({ posts: [] }))
+                ]);
+
+                // Save profile data
+                if (!profileData.profile) {
+                    profileData.profile = profileResponse;
+                }
+
+                const container = $(containerId);
+                if (!container) return;
+
+                const creatorName = profileResponse?.name || `Criador ${creatorId}`;
+                const posts = postsResponse.posts || postsResponse || [];
+                const pagination = postsResponse.pagination || null;
+
+                // Smart pagination detection
+                const hasMorePages = posts.length === ITEMS_PER_PAGE; // If we got exactly 50, there might be more
+                const estimatedTotalPages = pagination?.total_pages || (hasMorePages ? page + 1 : page);
+
+                console.log(`📄 Criador ${creatorId} - Página ${page}: ${posts.length} posts, hasMorePages: ${hasMorePages}`);
+
+                // Save pagination info for this creator
+                if (!profileData.paginationInfo) {
+                    profileData.paginationInfo = {
+                        hasMorePages,
+                        knownPages: new Set([page])
+                    };
+                } else {
+                    profileData.paginationInfo.knownPages.add(page);
+                    if (!hasMorePages && page === Math.max(...profileData.paginationInfo.knownPages)) {
+                        profileData.paginationInfo.maxPage = page;
+                        console.log(`📄 Criador ${creatorId} - Última página detectada: ${page}`);
+                    }
+                }
+
+                // Get creator icon URL
+                const iconUrl = getCreatorIconUrl(service, creatorId);
+
+                // Profile image from API or icon
+                let profileImageUrl = null;
+                if (profileResponse && profileResponse.icon) {
+                    profileImageUrl = `https://coomer.su/data${profileResponse.icon}`;
+                } else {
+                    profileImageUrl = iconUrl;
+                }
+
+                // Calculate total posts estimate
+                let totalPostsEstimate = '';
+                if (pagination?.count) {
+                    totalPostsEstimate = `${pagination.count} posts total`;
+                } else if (profileData.paginationInfo.maxPage) {
+                    const estimatedTotal = (profileData.paginationInfo.maxPage - 1) * ITEMS_PER_PAGE + posts.length;
+                    totalPostsEstimate = `~${estimatedTotal} posts`;
+                } else if (hasMorePages) {
+                    totalPostsEstimate = `${page * ITEMS_PER_PAGE}+ posts`;
+                } else {
+                    totalPostsEstimate = `${posts.length} posts`;
+                }
+
+                container.innerHTML = `
+                    <div class="header">
+                        <h2>👤 ${escapeHtml(creatorName)}</h2>
+                        <button class="btn btn-outline" onclick="navigate('${currentSection === 'perfil-criador' ? 'criadores' : currentSection}')">⬅️ Voltar</button>
+                    </div>
+
+                    <div class="creator-card" style="margin-bottom: 30px; background: linear-gradient(135deg, #6f42c1, #8b5cf6); color: white; border: none;">
+                        <div class="creator-avatar" style="width: 90px; height: 90px; font-size: 36px; background: rgba(255,255,255,0.2);">
+                            <img src="${profileImageUrl}"
+                                 alt="${creatorName}"
+                                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;"
+                                 onerror="this.style.display='none'; this.parentElement.textContent='${creatorName.charAt(0).toUpperCase()}';">
+                        </div>
+                        <div class="creator-info" style="color: white;">
+                            <div class="creator-name" style="color: white; font-size: 22px;">${escapeHtml(creatorName)}</div>
+                            <div class="creator-stats" style="color: rgba(255,255,255,0.9);">
+                                <div style="margin-bottom: 8px;">
+                                    <span class="tag" style="background: rgba(255,255,255,0.2); color: white;">${service}</span>
+                                </div>
+                                <div>🆔 ${creatorId}</div>
+                                <div>📊 ${totalPostsEstimate}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="header">
+                        <h3>📝 Posts do Criador</h3>
+                        <div class="stats">
+                            Página ${page}${estimatedTotalPages > 1 ? ` de ${estimatedTotalPages}+` : ''} • ${totalPostsEstimate}
+                        </div>
+                    </div>
+
+                    <div class="grid" id="creatorPostsGrid">
+                        ${displayCreatorPostsGrid(posts)}
+                    </div>
+
+                    ${(hasMorePages || page > 1 || (profileData.paginationInfo?.maxPage && profileData.paginationInfo.maxPage > 1)) ? `
+                        <div class="pagination" id="creatorPostsPagination">
+                            ${generateCreatorPostsPagination(service, creatorId, page, hasMorePages, estimatedTotalPages, profileData.paginationInfo)}
+                        </div>
+                    ` : ''}
+                `;
+
+                profileData.currentPage = page;
+
+            } catch (error) {
+                console.error('Erro ao carregar posts do criador:', error);
+                const container = $(containerId);
+                if (container) {
+                    container.innerHTML = `<div class="error">Erro ao carregar posts: ${error.message}</div>`;
+                }
+            } finally {
+                profileData.loading = false;
+                loading(false);
+            }
+        }
+
+        function displayCreatorPostsGrid(posts) {
+            if (!Array.isArray(posts) || posts.length === 0) {
+                return '<div class="empty"><div class="empty-icon">📭</div><div class="empty-title">Nenhum post encontrado</div></div>';
+            }
+
+            return posts.map(post => {
+                const isFavorited = favorites.some(f => f.id === post.id && f.service === post.service);
+                const hasFile = post.file && post.file.path;
+                const fileUrl = hasFile ? `https://coomer.su/data${post.file.path}` : null;
+                const isVideo = hasFile && /\.(mp4|webm|avi|mov|mkv)$/i.test((post.file.name || '') + (post.file.path || ''));
+
+                let mediaElement = '';
+                if (hasFile) {
+                    if (isVideo) {
+                        mediaElement = `
+                            <div class="card-media">
+                                <video class="card-video" preload="metadata" muted>
+                                    <source src="${fileUrl}" type="video/mp4">
+                                </video>
+                                <div class="play-overlay">▶</div>
+                            </div>
+                        `;
+                    } else {
+                        mediaElement = `
+                            <div class="card-media">
+                                <img class="card-img" src="${fileUrl}" alt="${post.title || 'Post'}" loading="lazy">
+                            </div>
+                        `;
+                    }
+                } else {
+                    mediaElement = `
+                        <div class="card-media" style="background: #495057; display: flex; align-items: center; justify-content: center; color: #adb5bd; font-size: 12px;">
+                            📄 Sem Mídia
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="card">
+                        <button class="fav-btn ${isFavorited ? 'favorited' : ''}"
+                                onclick="toggleFavorite('${post.id}', '${post.service}', '${post.user}')">
+                            ${isFavorited ? '❤️' : '🤍'}
+                        </button>
+                        ${mediaElement}
+                        <div class="card-body">
+                            <div class="card-title">${escapeHtml(post.title || 'Sem título')}</div>
+                            <div class="card-meta">
+                                <div style="margin-bottom: 6px;">
+                                    ${post.fav_count ? `<span class="tag fav">❤️ ${post.fav_count}</span>` : ''}
+                                </div>
+                                <div>📅 ${formatDate(post.published)}</div>
+                            </div>
+                            <button class="btn" onclick="openPostModal('${post.service}', '${post.user}', '${post.id}')"
+                                    style="width: 100%; font-size: 12px; padding: 8px;">
+                                👁️ Ver Post
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function generateCreatorPostsPagination(service, creatorId, currentPage, hasMorePages, estimatedTotalPages, paginationInfo) {
+            let paginationHtml = '';
+
+            // Previous button
+            if (currentPage > 1) {
+                paginationHtml += `<button class="page-btn" onclick="loadCreatorPosts('${service}', '${creatorId}', ${currentPage - 1}, 'creatorProfileContainer')">⬅️ Anterior</button>`;
+            } else {
+                paginationHtml += `<button class="page-btn" disabled>⬅️ Anterior</button>`;
+            }
+
+            // Page info - show current page and indicate if there are more
+            const totalPagesText = paginationInfo?.maxPage ?
+                ` de ${paginationInfo.maxPage}` :
+                (hasMorePages ? '+' : '');
+            paginationHtml += `<div class="page-info">Página ${currentPage}${totalPagesText}</div>`;
+
+            // Page numbers - show current page and a few around it
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = startPage + maxVisiblePages - 1;
+
+            // If we know there are more pages or have a max page, adjust the range
+            if (paginationInfo?.maxPage) {
+                endPage = Math.min(endPage, paginationInfo.maxPage);
+            } else if (hasMorePages) {
+                // We know there's at least one more page
+                endPage = Math.min(endPage, currentPage + 3);
+            } else {
+                // No more pages after current
+                endPage = currentPage;
+            }
+
+            // Show pages
+            for (let i = startPage; i <= endPage; i++) {
+                const isActive = i === currentPage;
+                const isClickable = !isActive && (i < currentPage || hasMorePages || (paginationInfo?.maxPage && i <= paginationInfo.maxPage));
+
+                paginationHtml += `
+                    <button class="page-btn ${isActive ? 'active' : ''}"
+                            onclick="${isClickable ? `loadCreatorPosts('${service}', '${creatorId}', ${i}, 'creatorProfileContainer')` : ''}"
+                            ${!isClickable ? 'disabled' : ''}>
+                        ${i}
+                    </button>
+                `;
+            }
+
+            // Show "..." and higher pages if we suspect there are many more
+            if (hasMorePages && !paginationInfo?.maxPage && currentPage < 10) {
+                if (endPage < currentPage + 5) {
+                    paginationHtml += `<span style="color: #adb5bd; padding: 0 10px;">...</span>`;
+
+                    // Show some higher page numbers
+                    const jumpPages = [currentPage + 5, currentPage + 10];
+                    jumpPages.forEach(pageNum => {
+                        if (pageNum > endPage) {
+                            paginationHtml += `
+                                <button class="page-btn" onclick="loadCreatorPosts('${service}', '${creatorId}', ${pageNum}, 'creatorProfileContainer')">
+                                    ${pageNum}
+                                </button>
+                            `;
+                        }
+                    });
+                }
+            }
+
+            // Next button
+            const canGoNext = hasMorePages || (paginationInfo?.maxPage && currentPage < paginationInfo.maxPage);
+            if (canGoNext) {
+                paginationHtml += `<button class="page-btn" onclick="loadCreatorPosts('${service}', '${creatorId}', ${currentPage + 1}, 'creatorProfileContainer')">Próxima ➡️</button>`;
+            } else {
+                paginationHtml += `<button class="page-btn" disabled>Próxima ➡️</button>`;
+            }
+
+            return paginationHtml;
+        }
+
+        // Enhanced Modal Functions with Media Navigation
+        async function openPostModal(service, userId, postId) {
+            loading(true);
+            try {
+                const data = await apiRequest(`/v1/${service}/user/${userId}/post/${postId}`);
+                const post = data.post || data;
+
+                // Prepare media array for navigation
+                currentModalMedia = [];
+                currentModalIndex = 0;
+
+                // Add main file if exists
+                if (post.file && post.file.path) {
+                    currentModalMedia.push({
+                        url: `https://coomer.su/data${post.file.path}`,
+                        type: /\.(mp4|webm|avi|mov|mkv)$/i.test((post.file.name || '') + (post.file.path || '')) ? 'video' : 'image',
+                        name: post.file.name || 'Arquivo principal'
+                    });
+                }
+
+                // Add attachments
+                if (post.attachments && Array.isArray(post.attachments)) {
+                    post.attachments.forEach(attachment => {
+                        if (attachment.path) {
+                            currentModalMedia.push({
+                                url: `https://coomer.su/data${attachment.path}`,
+                                type: /\.(mp4|webm|avi|mov|mkv)$/i.test((attachment.name || '') + (attachment.path || '')) ? 'video' : 'image',
+                                name: attachment.name || 'Anexo'
+                            });
+                        }
+                    });
+                }
+
+                const modalTitle = $('modalTitle');
+                const modalBody = $('modalBody');
+
+                if (modalTitle) modalTitle.textContent = post.title || 'Post';
+
+                const isFavorited = favorites.some(f => f.id === postId && f.service === service);
+
+                if (modalBody) {
+                    modalBody.innerHTML = `
+                        ${currentModalMedia.length > 0 ? `
+                            <div class="modal-media-container">
+                                <div id="modalMediaContent">
+                                    ${renderModalMedia(0)}
+                                </div>
+                                ${currentModalMedia.length > 1 ? `
+                                    <button class="modal-nav-btn prev" onclick="navigateModalMedia(-1)" ${currentModalIndex === 0 ? 'disabled' : ''}>
+                                        ◀
+                                    </button>
+                                    <button class="modal-nav-btn next" onclick="navigateModalMedia(1)" ${currentModalIndex === currentModalMedia.length - 1 ? 'disabled' : ''}>
+                                        ▶
+                                    </button>
+                                    <div class="modal-counter">
+                                        <span id="modalCounter">${currentModalIndex + 1} / ${currentModalMedia.length}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+
+                        <div style="margin: 25px 0; padding: 20px; background: rgba(111, 66, 193, 0.1); border-radius: 15px; border-left: 5px solid #6f42c1;">
+                            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+                                <span class="tag service">${post.service}</span>
+                                ${post.fav_count ? `<span class="tag fav">❤️ ${post.fav_count}</span>` : ''}
+                            </div>
+                            <div style="font-size: 14px; color: #adb5bd; line-height: 1.6;">
+                                <div style="margin-bottom: 8px;">👤 <a href="#" onclick="closeModal(); showCreatorProfile('${post.service}', '${post.user}')"
+                                         style="color: #6f42c1; text-decoration: none; font-weight: 700;">${post.user}</a></div>
+                                <div style="margin-bottom: 8px;">📅 Publicado: ${formatDate(post.published)}</div>
+                                ${post.edited ? `<div style="margin-bottom: 8px;">✏️ Editado: ${formatDate(post.edited)}</div>` : ''}
+                                <div>📥 Adicionado: ${formatDate(post.added)}</div>
+                            </div>
+                        </div>
+
+                        ${post.content ? `
+                            <div class="modal-content-text">
+                                <h5 style="color: #6f42c1; margin-bottom: 15px; font-size: 16px;">📄 Conteúdo</h5>
+                                <div style="line-height: 1.7;">${(post.content)}</div>
+                            </div>
+                        ` : ''}
+
+                        <div style="text-align: center; margin-top: 30px; padding-top: 25px; border-top: 1px solid #495057;">
+                            <button class="btn" onclick="toggleFavorite('${postId}', '${service}', '${userId}'); updateModalFavoriteButton('${postId}', '${service}')"
+                                    id="modalFavoriteBtn" style="min-width: 200px; font-size: 14px;">
+                                ${isFavorited ? '💔 Remover dos Favoritos' : '💖 Adicionar aos Favoritos'}
+                            </button>
+                        </div>
+                    `;
+                }
+
+                const modal = $('postModal');
+                if (modal) modal.style.display = 'flex';
+            } catch (error) {
+                showError(`Erro ao carregar detalhes do post: ${error.message}`);
+            } finally {
+                loading(false);
+            }
+        }
+
+        function renderModalMedia(index) {
+            if (!currentModalMedia[index]) return '';
+
+            const media = currentModalMedia[index];
+
+            if (media.type === 'video') {
+                return `
+                    <video class="modal-media" controls style="width: 100%; max-height: 60vh; object-fit: contain;">
+                        <source src="${media.url}" type="video/mp4">
+                        Seu navegador não suporta reprodução de vídeo.
+                    </video>
+                `;
+            } else {
+                return `
+                    <img class="modal-media" src="${media.url}" alt="${media.name}"
+                         style="width: 100%; height: auto; max-height: 70vh; object-fit: contain;">
+                `;
+            }
+        }
+
+        function navigateModalMedia(direction) {
+            const newIndex = currentModalIndex + direction;
+
+            if (newIndex >= 0 && newIndex < currentModalMedia.length) {
+                currentModalIndex = newIndex;
+
+                const mediaContent = $('modalMediaContent');
+                const counter = $('modalCounter');
+                const prevBtn = document.querySelector('.modal-nav-btn.prev');
+                const nextBtn = document.querySelector('.modal-nav-btn.next');
+
+                if (mediaContent) {
+                    mediaContent.innerHTML = renderModalMedia(currentModalIndex);
+                }
+
+                if (counter) {
+                    counter.textContent = `${currentModalIndex + 1} / ${currentModalMedia.length}`;
+                }
+
+                if (prevBtn) {
+                    prevBtn.disabled = currentModalIndex === 0;
+                }
+
+                if (nextBtn) {
+                    nextBtn.disabled = currentModalIndex === currentModalMedia.length - 1;
+                }
+            }
+        }
+
+        function closeModal() {
+            const modal = $('postModal');
+            if (modal) modal.style.display = 'none';
+            currentModalMedia = [];
+            currentModalIndex = 0;
+        }
+
+        function updateModalFavoriteButton(postId, service) {
+            const btn = $('modalFavoriteBtn');
+            if (btn) {
+                const isFavorited = favorites.some(f => f.id === postId && f.service === service);
+                btn.textContent = isFavorited ? '💔 Remover dos Favoritos' : '💖 Adicionar aos Favoritos';
+            }
+        }
+
+        // Favorites System
+        function toggleFavorite(postId, service, userId) {
+            const existingIndex = favorites.findIndex(f => f.id === postId && f.service === service);
+
+            if (existingIndex > -1) {
+                favorites.splice(existingIndex, 1);
+            } else {
+                favorites.push({
+                    id: postId,
+                    service: service,
+                    user: userId,
+                    addedAt: new Date().toISOString()
+                });
+            }
+
+            localStorage.setItem('coomer_favorites', JSON.stringify(favorites));
+            updateFavoriteCounter();
+            updateFavoriteButtons(postId, service);
+
+            // Recarregar favoritos se estivermos na página de favoritos
+            if (currentSection === 'favoritos') {
+                loadFavorites();
+            }
+        }
+
+        function updateFavoriteCounter() {
+            const counter = $('favCounter');
+            if (counter) counter.textContent = `♥ ${favorites.length}`;
+        }
+
+        function updateFavoriteButtons(postId, service) {
+            const isFavorited = favorites.some(f => f.id === postId && f.service === service);
+
+            document.querySelectorAll('.fav-btn').forEach(btn => {
+                const onclick = btn.getAttribute('onclick');
+                if (onclick && onclick.includes(`'${postId}'`) && onclick.includes(`'${service}'`)) {
+                    btn.classList.toggle('favorited', isFavorited);
+                    btn.textContent = isFavorited ? '❤️' : '🤍';
+                    btn.title = isFavorited ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
+                }
+            });
+        }
+
+        // Pagination System
+        function generatePagination(currentPage, containerId, loadFunction, totalPages = null) {
+            const container = $(containerId);
+            if (!container) return;
+
+            const maxPages = totalPages || currentPage + 10;
+            let paginationHtml = '';
+
+            // Previous button
+            if (currentPage > 1) {
+                paginationHtml += `<button class="page-btn" onclick="${loadFunction.name}(${currentPage - 1})">⬅️ Anterior</button>`;
+            } else {
+                paginationHtml += `<button class="page-btn" disabled>⬅️ Anterior</button>`;
+            }
+
+            // Page info
+            paginationHtml += `<div class="page-info">Página ${currentPage}${totalPages ? ` de ${totalPages}` : ''}</div>`;
+
+            // Page numbers
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(maxPages, currentPage + 2);
+
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHtml += `
+                    <button class="page-btn ${i === currentPage ? 'active' : ''}"
+                            onclick="${i !== currentPage ? `${loadFunction.name}(${i})` : ''}"
+                            ${i === currentPage ? 'disabled' : ''}>
+                        ${i}
+                    </button>
+                `;
+            }
+
+            // Next button
+            if (!totalPages || currentPage < maxPages) {
+                paginationHtml += `<button class="page-btn" onclick="${loadFunction.name}(${currentPage + 1})">Próxima ➡️</button>`;
+            } else {
+                paginationHtml += `<button class="page-btn" disabled>Próxima ➡️</button>`;
+            }
+
+            container.innerHTML = paginationHtml;
+        }
+
+        // Utility Functions
+        function updateStats(statsId, text) {
+            const element = $(statsId);
+            if (element) element.textContent = text;
+        }
+
+        function showError(message, containerId = null) {
+            const errorHtml = `<div class="error">❌ ${escapeHtml(message)}</div>`;
+
+            if (containerId) {
+                const container = $(containerId);
+                if (container) container.innerHTML = errorHtml;
+            }
+        }
+
+        function showEmpty(message, containerId) {
+            const container = $(containerId);
+            if (container) {
+                container.innerHTML = `
+                    <div class="empty">
+                        <div class="empty-icon">📭</div>
+                        <div class="empty-title">Nada encontrado</div>
+                        <div class="empty-text">${escapeHtml(message)}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (error) {
+                return dateString;
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            updateFavoriteCounter();
+            navigate('inicio');
+
+            // Enter key support for searches
+            const creatorSearchInput = $('creatorSearchInput');
+            if (creatorSearchInput) {
+                creatorSearchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        searchCreators();
+                    }
+                });
+            }
+
+            // Modal click outside to close
+            const modal = $('postModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) closeModal();
+                });
+            }
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeModal();
+
+                // Modal navigation with arrow keys
+                if ($('postModal').style.display === 'flex') {
+                    if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        navigateModalMedia(-1);
+                    } else if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        navigateModalMedia(1);
+                    }
+                }
+
+                if (e.ctrlKey || e.metaKey) {
+                    switch(e.key.toLowerCase()) {
+                        case 'h': e.preventDefault(); navigate('inicio'); break;
+                        case 'c': e.preventDefault(); navigate('criadores'); break;
+                        case 'p': e.preventDefault(); navigate('popular'); break;
+                        case 'f': e.preventDefault(); navigate('favoritos'); break;
+                    }
+                }
+            });
+
+            console.log('🚀 Coomer Navigator v3.1 inicializado com sucesso!');
+            console.log('🎯 Funcionalidades: Posts, Criadores, Pesquisa, Favoritos, Modal com navegação');
+            console.log('🔄 Paginação inteligente: Detecta automaticamente páginas disponíveis');
+            console.log('⌨️ Atalhos: Ctrl+H (Início), Ctrl+C (Criadores), Ctrl+P (Popular), Ctrl+F (Favoritos)');
+            console.log('🔄 Modal: Use ← → para navegar entre mídias, ESC para fechar');
+        });
+
+        // Performance optimizations
+        let imageObserver;
+        if ('IntersectionObserver' in window) {
+            imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.classList.remove('lazy');
+                        observer.unobserve(img);
+                    }
+                });
+            });
+        }
+
+        // Auto-refresh favorites counter
+        setInterval(updateFavoriteCounter, 1000);
+    </script>
+</body>
+</html>
